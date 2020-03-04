@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath("com.github.jengelman.gradle.plugins:shadow:5.2.0")
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.3.61"
 }
@@ -9,6 +15,7 @@ allprojects {
     }
 
     apply(plugin = "kotlin")
+    apply(plugin = "com.github.johnrengelman.shadow")
     apply(plugin = "application")
 
     tasks {

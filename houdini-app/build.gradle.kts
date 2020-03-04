@@ -48,6 +48,9 @@ tasks {
         }
     }
     jar {
+        manifest {
+            attributes["Main-Class"] = application.mainClassName
+        }
         archiveBaseName.set("houdini-bot")
         archiveVersion.set("0.1.0")
     }
