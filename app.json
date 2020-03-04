@@ -1,0 +1,5 @@
+{
+  "name": "Houdini",
+  "description": "A barebones Discord bot, which can easily be deployed to Heroku.",
+  "addons": [ "heroku-postgresql" ]
+}

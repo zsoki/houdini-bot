@@ -1,0 +1,19 @@
+# CMake
+cmake-build-*/
+
+out/
+build/
+
+.idea/
+.idea_modules/
+
+modules.xml
+
+*.iws
+*.iml
+*.ipr
+
+.gradle
+.gradletasknamecache
+gradle-app.setting
+!gradle-wrapper.jar
