@@ -36,7 +36,7 @@ dependencies {
 
 tasks {
     register("stage") {
-        dependsOn(jar)
+        dependsOn(shadowJar)
     }
 
     test {
@@ -47,7 +47,7 @@ tasks {
             freeCompilerArgs = listOf("-XXLanguage:+InlineClasses")
         }
     }
-    jar {
+    shadowJar {
         manifest {
             attributes["Main-Class"] = application.mainClassName
         }
