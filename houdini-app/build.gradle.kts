@@ -35,11 +35,10 @@ dependencies {
 }
 
 tasks {
-    register("initToken", Copy::class) {
-        from("../token_release.txt")
-        into("build/libs")
-        rename("token_release.txt", "token.txt")
+    register("stage") {
+        dependsOn(jar)
     }
+
     test {
         useJUnitPlatform()
     }
