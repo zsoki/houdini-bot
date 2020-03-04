@@ -6,9 +6,8 @@ import com.serebit.strife.onMessageCreate
 import com.soywiz.klock.DateTime
 
 private val token = System.getenv("DISCORD_TOKEN") ?: error("You need to define DISCORD_TOKEN environment variable.")
-
-private val inviteUrl =
-    "https://discordapp.com/oauth2/authorize?scope=bot&client_id=684856343823122484&permissions=2048"
+private val clientId = System.getenv("CLIENT_ID") ?: error("You need to define CLIENT_ID environment variable.")
+private val inviteUrl = "https://discordapp.com/oauth2/authorize?scope=bot&client_id=$clientId&permissions=2048"
 
 suspend fun main() {
     bot(token) {
@@ -22,7 +21,7 @@ suspend fun main() {
             }
             command("..") {
                 addQuote(keyword, extra)
-                message.reply("Mock process finished.")
+                message.reply("Mock addQuote() process finished: \"$keyword\" to \"$extra\"")
             }
         }
     }

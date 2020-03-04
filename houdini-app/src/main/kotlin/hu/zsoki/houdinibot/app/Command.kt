@@ -9,10 +9,9 @@ suspend fun MessageCreateEvent.command(prefix: String, keyword: String? = null, 
 
     if (!content.startsWith(prefix)) return
 
-    val words = content.drop(prefix.length).removeSurrounding(" ").split(" ")
+    val words = content.drop(prefix.length).trim().split(" ")
 
     if (keyword != null && (words.isEmpty() || words.first() != keyword)) return
-    if (keyword == null && words.first() != prefix) return
 
     function.invoke(
         CommandBuilder(
