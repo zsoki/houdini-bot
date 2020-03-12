@@ -12,14 +12,13 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 private val token = System.getenv("DISCORD_TOKEN") ?: error("You need to define DISCORD_TOKEN environment variable.")
 private val clientId = System.getenv("CLIENT_ID") ?: error("You need to define CLIENT_ID environment variable.")
 
-private val databaseUrl =
-    System.getenv("DATABASE_URL") ?: error("You need to define DATABASE_URL environment variable.")
+private val jdbcDatabaseUrl = System.getenv("JDBC_DATABASE_URL") ?: error("You need to define JDBC_DATABASE_URL environment variable.")
 private const val driverClass = "org.postgresql.Driver"
 
 private val inviteUrl = "https://discordapp.com/oauth2/authorize?scope=bot&client_id=$clientId&permissions=2048"
 
 suspend fun main() {
-    Database.connect(databaseUrl, driverClass)
+    Database.connect(jdbcDatabaseUrl, driverClass)
 
     newSuspendedTransaction {
         SchemaUtils.create(QuoteTable)
