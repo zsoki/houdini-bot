@@ -25,6 +25,10 @@ dependencies {
     implementation("com.serebit.strife", "strife-client-jvm", "0.3.1")
 
     // Persistence
+    implementation("org.postgresql:postgresql:42.2.11")
+    compile("org.jetbrains.exposed", "exposed-core", "0.22.1")
+    compile("org.jetbrains.exposed", "exposed-jdbc", "0.22.1")
+    compile("org.jetbrains.exposed", "exposed-java-time", "0.22.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
 
     // Testing
