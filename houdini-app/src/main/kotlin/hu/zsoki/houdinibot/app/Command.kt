@@ -28,7 +28,7 @@ class CommandBuilder(
     event: MessageCreateEvent,
     val prefix: String,
     val keyword: String,
-    val params: List<String>
+    val params: List<String> = listOf()
 ) {
     val extra = event.message.content.removePrefix("$prefix$keyword ")
 }
