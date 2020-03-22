@@ -1,6 +1,8 @@
 package hu.zsoki.houdinibot.app
 
 import com.serebit.strife.bot
+import com.serebit.strife.data.Activity
+import com.serebit.strife.data.OnlineStatus
 import com.serebit.strife.entities.field
 import com.serebit.strife.entities.reply
 import com.serebit.strife.entities.title
@@ -27,7 +29,9 @@ suspend fun main() {
     }
 
     bot(token) {
-        keepAlive(5.minutes)
+        scheduledTask("updateUptime", 5.minutes) {
+            context.updatePresence(OnlineStatus.ONLINE, Activity.Type.Playing to buildUptimeString())
+        }
 
         onMessageCreate {
             command(";", "help") {
