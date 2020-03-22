@@ -5,7 +5,7 @@ import com.serebit.strife.BotBuilderDsl
 import com.serebit.strife.events.ReadyEvent
 import com.serebit.strife.onReady
 import com.soywiz.klock.TimeSpan
-import com.soywiz.klock.minutes
+import com.soywiz.klock.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -14,7 +14,7 @@ import kotlin.coroutines.coroutineContext
 
 @BotBuilderDsl
 fun BotBuilder.scheduledTask(taskName: String, timeSpan: TimeSpan, function: suspend ReadyEvent.() -> Unit) {
-    val delayMillis = if (timeSpan <= 1.minutes) 1.minutes.millisecondsLong else timeSpan.millisecondsLong
+    val delayMillis = if (timeSpan <= 5.seconds) 5.seconds.millisecondsLong else timeSpan.millisecondsLong
     onReady {
         while(coroutineContext.isActive) {
             try {

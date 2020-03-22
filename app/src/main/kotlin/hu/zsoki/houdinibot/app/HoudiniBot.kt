@@ -1,13 +1,13 @@
 package hu.zsoki.houdinibot.app
 
-import com.serebit.strife.bot
+import com.serebit.strife.*
 import com.serebit.strife.data.Activity
 import com.serebit.strife.data.OnlineStatus
 import com.serebit.strife.entities.field
 import com.serebit.strife.entities.reply
 import com.serebit.strife.entities.title
-import com.serebit.strife.onMessageCreate
 import com.soywiz.klock.minutes
+import hu.zsoki.houdinibot.app.Invite.generateInviteUrl
 import hu.zsoki.houdinibot.app.db.*
 import hu.zsoki.houdinibot.app.domain.truncate
 import org.jetbrains.exposed.sql.Database
@@ -16,9 +16,6 @@ import org.jetbrains.exposed.sql.exists
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 private val token = System.getenv("DISCORD_TOKEN") ?: error("You need to define DISCORD_TOKEN environment variable.")
-private val clientId = System.getenv("CLIENT_ID") ?: error("You need to define CLIENT_ID environment variable.")
-
-private val inviteUrl = "https://discordapp.com/oauth2/authorize?scope=bot&client_id=$clientId&permissions=2048"
 
 suspend fun main() {
     Database.connect(jdbcUrl, driverClass)
@@ -29,8 +26,10 @@ suspend fun main() {
     }
 
     bot(token) {
+        generateInviteUrl()
+
         scheduledTask("updateUptime", 5.minutes) {
-            context.updatePresence(OnlineStatus.ONLINE, Activity.Type.Playing to buildUptimeString())
+            context.updatePresence(OnlineStatus.ONLINE, Activity.Type.Listening to ";help | ${Uptime.formattedString}")
         }
 
         onMessageCreate {
@@ -45,7 +44,7 @@ suspend fun main() {
                 }
             }
             command(";", "invite") {
-                message.reply(inviteUrl)
+                message.reply(Invite.url)
             }
             command(".. ") {
                 val authorName = message.author?.username ?: "UnknownUser"
