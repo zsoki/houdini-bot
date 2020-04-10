@@ -1,11 +1,14 @@
 package hu.zsoki.houdinibot.app
 
-import com.serebit.strife.*
+import com.serebit.strife.BotBuilder
+import com.serebit.strife.bot
 import com.serebit.strife.data.Activity
 import com.serebit.strife.data.OnlineStatus
 import com.serebit.strife.entities.field
 import com.serebit.strife.entities.reply
 import com.serebit.strife.entities.title
+import com.serebit.strife.events.MessageCreateEvent
+import com.serebit.strife.onMessageCreate
 import com.soywiz.klock.minutes
 import hu.zsoki.houdinibot.app.Invite.generateInviteUrl
 import hu.zsoki.houdinibot.app.db.*
@@ -21,8 +24,8 @@ suspend fun main() {
     Database.connect(jdbcUrl, driverClass)
 
     newSuspendedTransaction {
-        SchemaUtils.create(QuoteTableV1)
-        if (QuoteTableV0.exists()) migrateFromV0()
+        SchemaUtils.create(QuoteTable)
+        if (QuoteTableDeprecated.exists()) migrateFromDeprecated()
     }
 
     bot(token) {

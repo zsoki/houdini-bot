@@ -7,33 +7,35 @@ import org.jetbrains.exposed.sql.`java-time`.datetime
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.LocalDateTime
 
-object QuoteTableV1 : Table("quote_v1") {
+object QuoteTable : Table("quote_v2") {
     val id: Column<Int> = integer("id").autoIncrement()
     val createdAt: Column<LocalDateTime> = datetime("created_at").default(LocalDateTime.now())
     val author: Column<String> = varchar("author", 64)
     val keyword: Column<String> = varchar("keyword", 32)
     val text: Column<String> = text("text")
+
+    override val primaryKey = PrimaryKey(id)
 }
 
 suspend fun addQuote(user: String, keyword: String, text: String): Int = newSuspendedTransaction(Dispatchers.IO) {
-    val insertStatement = QuoteTableV1.insert {
+    val insertStatement = QuoteTable.insert {
         it[this.author] = user
         it[this.keyword] = keyword
         it[this.text] = text
     }
-    insertStatement[QuoteTableV1.id]
+    insertStatement[QuoteTable.id]
 }
 
 suspend fun removeQuote(id: Int) = newSuspendedTransaction(Dispatchers.IO) {
-    val deletedQuote = QuoteTableV1.select { QuoteTableV1.id eq id }.map {quoteRow ->
+    val deletedQuote = QuoteTable.select { QuoteTable.id eq id }.map { quoteRow ->
         Quote(
-            id = quoteRow[QuoteTableV1.id],
-            author = quoteRow[QuoteTableV1.author],
-            keyword = quoteRow[QuoteTableV1.keyword],
-            text = quoteRow[QuoteTableV1.text]
+            id = quoteRow[QuoteTable.id],
+            author = quoteRow[QuoteTable.author],
+            keyword = quoteRow[QuoteTable.keyword],
+            text = quoteRow[QuoteTable.text]
         )
     }.first()
-    QuoteTableV1.deleteWhere { QuoteTableV1.id eq id }
+    QuoteTable.deleteWhere { QuoteTable.id eq id }
     deletedQuote
 }
 
@@ -46,27 +48,27 @@ suspend fun getAllQuotesFor(keyword: String): List<Quote> = newSuspendedTransact
 }
 
 suspend fun getAllQuotes(): List<Quote> = newSuspendedTransaction(Dispatchers.IO) {
-    QuoteTableV1
+    QuoteTable
         .selectAll()
         .map { quoteRow ->
             Quote(
-                id = quoteRow[QuoteTableV1.id],
-                author = quoteRow[QuoteTableV1.author],
-                keyword = quoteRow[QuoteTableV1.keyword],
-                text = quoteRow[QuoteTableV1.text]
+                id = quoteRow[QuoteTable.id],
+                author = quoteRow[QuoteTable.author],
+                keyword = quoteRow[QuoteTable.keyword],
+                text = quoteRow[QuoteTable.text]
             )
         }
 }
 
 private fun getAllQuotesForKeywordInternal(keyword: String): List<Quote> {
-    return QuoteTableV1
-        .select { QuoteTableV1.keyword eq keyword }
+    return QuoteTable
+        .select { QuoteTable.keyword eq keyword }
         .map { quoteRow ->
             Quote(
-                id = quoteRow[QuoteTableV1.id],
-                author = quoteRow[QuoteTableV1.author],
-                keyword = quoteRow[QuoteTableV1.keyword],
-                text = quoteRow[QuoteTableV1.text]
+                id = quoteRow[QuoteTable.id],
+                author = quoteRow[QuoteTable.author],
+                keyword = quoteRow[QuoteTable.keyword],
+                text = quoteRow[QuoteTable.text]
             )
         }
 }
