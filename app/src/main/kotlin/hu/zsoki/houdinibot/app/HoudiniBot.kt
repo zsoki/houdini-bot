@@ -51,7 +51,7 @@ suspend fun main() {
                 }
 
                 command("quotes") {
-                    val quotes = if (words.isNullOrEmpty()) getAllQuotes() else getAllQuotesFor(words[0])
+                    val quotes = if (words.isNullOrEmpty()) QuoteTable.getAllQuotes() else QuoteTable.getAllQuotesFor(words[0])
 
                     val quotesReply = quotes.joinToString("\n") { quote ->
                         "`#${quote.id} ${quote.keyword}` 📢  ${quote.text.truncate()}"
@@ -65,7 +65,7 @@ suspend fun main() {
                 if (extra == null) return@command
 
                 val authorName = message.author?.username ?: "UnknownUser"
-                val id = addQuote(authorName, words[0], extra.removePrefix(words[0].trim()))
+                val id = QuoteTable.addQuote(authorName, words[0], extra.removePrefix(words[0].trim()))
                 message.reply {
                     description = """
                         Quote added successfully.
@@ -75,12 +75,12 @@ suspend fun main() {
             }
 
             command("...") {
-                val quote = getRandomQuote(words[0])
+                val quote = QuoteTable.getRandomQuote(words[0])
                 message.reply("`#${quote.id}` 📢  ${quote.text}")
             }
 
             command("--") {
-                val quote = removeQuote(words[0].toInt())
+                val quote = QuoteTable.removeQuote(words[0].toInt())
                 message.reply {
                     description = "Removed quote `#${quote.id}` from `${quote.keyword}` pool."
                 }
