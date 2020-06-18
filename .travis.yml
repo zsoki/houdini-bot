@@ -1,5 +1,7 @@
 language: java
 jdk: openjdk11
+before_install:
+  - chmod +x gradlew
 install: ./gradlew app:assemble
 script: ./gradlew app:check
 before_cache:
