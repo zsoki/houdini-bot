@@ -2,7 +2,7 @@ group = "hu.zsoki.houdinibot.app"
 version = "0.1.0"
 
 plugins {
-    kotlin("plugin.serialization") version "1.3.61"
+    kotlin("plugin.serialization") version "1.4.10"
 }
 
 application {
@@ -15,27 +15,28 @@ repositories {
 
 dependencies {
     // Kotlin
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
 
     // Logging
-    implementation("io.github.microutils:kotlin-logging:1.7.8")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.13.0")
+    implementation("io.github.microutils:kotlin-logging:2.0.3")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.13.3")
 
     // Discord
-    implementation("com.serebit.strife", "strife-client-jvm", "0.3.1")
+    implementation("com.serebit.strife", "strife-client-jvm", "0.4.0")
 
     // Persistence
-    implementation("org.postgresql:postgresql:42.2.11")
-    compile("org.jetbrains.exposed", "exposed-core", "0.22.1")
-    compile("org.jetbrains.exposed", "exposed-jdbc", "0.22.1")
-    compile("org.jetbrains.exposed", "exposed-java-time", "0.22.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+    implementation("org.xerial:sqlite-jdbc:3.32.3.2")
+    implementation("org.jetbrains.exposed", "exposed-core", "0.22.1")
+    implementation("org.jetbrains.exposed", "exposed-jdbc", "0.22.1")
+    implementation("org.jetbrains.exposed", "exposed-java-time", "0.22.1")
+//    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.1")
 
     // Testing
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.0")
-    testImplementation("io.mockk:mockk:1.9.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
+    testImplementation("io.mockk:mockk:1.10.2")
 }
 
 tasks {

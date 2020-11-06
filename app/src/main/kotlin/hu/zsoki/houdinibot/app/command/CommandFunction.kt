@@ -3,6 +3,7 @@ package hu.zsoki.houdinibot.app.command
 import com.serebit.strife.entities.Message
 import com.serebit.strife.events.MessageCreateEvent
 import com.serebit.strife.events.SingleMessageEvent
+import kotlinx.coroutines.runBlocking
 
 typealias CommandFunction = suspend CommandFunctionBuilder.() -> Unit
 
@@ -17,7 +18,7 @@ class CommandFunctionBuilder(
     val words: List<String>
 
     init {
-        val extraTrimmed = message.content.removePrefix(keyword).trim()
+        val extraTrimmed = runBlocking { message.getContent().removePrefix(keyword).trim() }
         extra = if (extraTrimmed.isBlank()) null else extraTrimmed
         words = extra?.toLowerCase()?.split(" ") ?: listOf()
     }

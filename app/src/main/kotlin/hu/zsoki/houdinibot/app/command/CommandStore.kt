@@ -16,7 +16,7 @@ private object CommandStore {
 fun BotBuilder.commandStore(function: SimpleCommandMapBuilder.() -> Unit) {
     CommandStore.addCommandFunctions(SimpleCommandMapBuilder().apply(function).build())
     onMessageCreate {
-        val keyword = message.content.trim().toLowerCase().split(" ").first()
+        val keyword = message.getContent().trim().toLowerCase().split(" ").first()
         val commandFunction = CommandStore.commandFunctions[keyword] ?: return@onMessageCreate
         commandFunction.invoke(CommandFunctionBuilder(this, keyword))
     }

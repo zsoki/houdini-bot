@@ -14,12 +14,15 @@ import hu.zsoki.houdinibot.app.domain.truncate
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.exists
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.sql.Connection
 
 private val token = System.getenv("DISCORD_TOKEN") ?: error("You need to define DISCORD_TOKEN environment variable.")
 
 suspend fun main() {
     Database.connect(jdbcUrl, driverClass)
+    TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
 
     newSuspendedTransaction {
         SchemaUtils.create(QuoteTable)
@@ -64,7 +67,7 @@ suspend fun main() {
             command("..") {
                 if (extra == null) return@command
 
-                val authorName = message.author?.username ?: "UnknownUser"
+                val authorName = message.getAuthor()?.getUsername() ?: "UnknownUser"
                 val id = QuoteTable.addQuote(authorName, words[0], extra.removePrefix(words[0].trim()))
                 message.reply {
                     description = """

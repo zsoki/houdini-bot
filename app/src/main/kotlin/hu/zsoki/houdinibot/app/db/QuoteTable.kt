@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.`java-time`.datetime
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.LocalDateTime
 
-object QuoteTable : Table("quote_v2") {
+object QuoteTable : Table("quote") {
     private val id: Column<Int> = integer("id").autoIncrement()
     val createdAt: Column<LocalDateTime> = datetime("created_at").default(LocalDateTime.now())
     val author: Column<String> = varchar("author", 64)
