@@ -17,3 +17,6 @@ modules.xml
 .gradletasknamecache
 gradle-app.setting
 !gradle-wrapper.jar
+
+scripts/linode-deploy
+data/data.db
