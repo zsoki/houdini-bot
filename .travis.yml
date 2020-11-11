@@ -22,7 +22,8 @@ cache:
 before_install:
   - echo $linode_deploy_password | gpg --passphrase-fd 0 scripts/linode-deploy.gpg
   - eval "$(ssh-agent -s)"
-  - cp linode-deploy ~/.ssh/linode-deploy
+  - ls -la
+  - cp scripts/linode-deploy ~/.ssh/linode-deploy
   - chmod 600 ~/.ssh/linode-deploy
   - ssh-add ~/.ssh/linode-deploy
   - echo -e "Host 172.104.134.26\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
