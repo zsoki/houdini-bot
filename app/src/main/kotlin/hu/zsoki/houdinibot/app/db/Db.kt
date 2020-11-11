@@ -1,6 +1,7 @@
 package hu.zsoki.houdinibot.app.db
 
-private val jdbcUrlEnvVariable = System.getenv("JDBC_DATABASE_URL") ?: error("You need to define JDBC_DATABASE_URL environment variable.")
+object Db {
+    val jdbcUrl = System.getProperty("jdbc.database.url") ?: error("You need to define jdbc.database.url property.")
 
-val jdbcUrl = jdbcUrlEnvVariable
-const val driverClass = "org.sqlite.JDBC"
+    const val driverClass = "org.sqlite.JDBC"
+}

@@ -10,30 +10,24 @@ import com.soywiz.klock.minutes
 import hu.zsoki.houdinibot.app.Invite.generateInviteUrl
 import hu.zsoki.houdinibot.app.command.commandStore
 import hu.zsoki.houdinibot.app.db.*
+import hu.zsoki.houdinibot.app.db.Db.driverClass
+import hu.zsoki.houdinibot.app.db.Db.jdbcUrl
 import hu.zsoki.houdinibot.app.domain.truncate
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.exists
 import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.sql.Connection
 
-private val token = System.getenv("DISCORD_TOKEN") ?: error("You need to define DISCORD_TOKEN environment variable.")
+private val token = System.getProperty("discord.token") ?: error("You need to define discord.token property.")
 
 suspend fun main() {
     Database.connect(jdbcUrl, driverClass)
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
 
-    newSuspendedTransaction {
-        SchemaUtils.create(QuoteTable)
-        if (QuoteTableDeprecated.exists()) migrateFromDeprecated()
-    }
-
     bot(token) {
         generateInviteUrl()
 
         scheduledTask("updateUptime", 5.minutes) {
-            context.updatePresence(OnlineStatus.ONLINE, Activity.Type.Listening to ";help | ${Uptime.formattedString}")
+            context.updatePresence(OnlineStatus.ONLINE, Activity.Type.Playing to ";help | ${Uptime.formattedString}")
         }
 
         commandStore {
