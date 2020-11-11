@@ -20,7 +20,7 @@ cache:
     - "$HOME/.gradle/wrapper/"
 
 before_install:
-  - echo $linode-deploy-password | gpg --passphrase-fd 0 scripts/linode-deploy.gpg
+  - echo $linode_deploy_password | gpg --passphrase-fd 0 scripts/linode-deploy.gpg
   - eval "$(ssh-agent -s)"
   - cp linode-deploy ~/.ssh/linode-deploy
   - chmod 600 ~/.ssh/linode-deploy
