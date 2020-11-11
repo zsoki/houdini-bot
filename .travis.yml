@@ -20,25 +20,28 @@ cache:
     - "$HOME/.gradle/wrapper/"
 
 before_install:
-- openssl aes-256-cbc -K $encrypted_8e85193f3435_key -iv $encrypted_8e85193f3435_iv
-  -in scripts/linode-deploy.enc -out scripts/linode-deploy -d
-- eval "$(ssh-agent -s)"
-- cp scripts/linode-deploy ~/.ssh/linode-deploy
-- chmod 600 ~/.ssh/linode-deploy
-- ssh-add ~/.ssh/linode-deploy
-- echo -e "Host 172.104.134.26\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-- chmod +x gradlew
+  - echo $linode-deploy-password | gpg --passphrase-fd 0 linode-deploy.gpg
+  - eval "$(ssh-agent -s)"
+  - cp scripts/linode-deploy ~/.ssh/linode-deploy
+  - chmod 600 ~/.ssh/linode-deploy
+  - ssh-add ~/.ssh/linode-deploy
+  - echo -e "Host 172.104.134.26\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - chmod +x gradlew
 
 install: "./gradlew app:assemble"
 
 script: "./gradlew app:check"
 
 before_deploy:
-- chmod +x scripts/deploy.sh
+  - chmod +x scripts/deploy.sh
 
 deploy:
-- provider: script
-  script: bash scripts/deploy.sh
-  skip_cleanup: true
-  on:
-    branch: master
+  - provider: script
+    script: bash scripts/deploy.sh
+    skip_cleanup: true
+    on:
+      branch: master
+
+env:
+  global:
+    secure: fv8T/31ifblSB7UhZ40dWnk4wzccpQHc1dsjiBsEnP0i/fK9T4VX5ucUTGJ+xB9zSTLPLrzyyXd8eDslZlG4utpLtHTmo5q0vduSqjgLa4SvDCSsAOEKpE5lDNdrEFGnnyF/DUlkFEFzgK+grQlGxwuRdRrlRNNQQ1jc5GtF3v7r1y+U77T2lZpdPWRFbMO4frzJfYBKKPs9DMkoTgEgqhBJDlMjGGj6dxVlMfkXNqnxhMJZhhxusaKjfHz4BZdLttD+dUjbSAL52+yXQlXtQZ58Tpq7hF5pxj2XunPu51FVzcILPSercf+L1OeNsLYY+Qtf+HGcigWq42G17t054naI3UuMPoM5JC8UGhVc2JYkzFt31OcLIyX8shgLMPNxQiSlxG2WPt5ItEnR2ks4C72HLEWYY6geB0hZEAqIwMxeKepuZcr5MxAboq92n91136q7Gdy+4iaInjW9xmFL3uwzuwIe2IIMUGqPxEY6ignDf8UjHYB7NJTIAUV/l3kLKOBe1GbbWGd+FmRMp6RBzlkQ8Od8S5yAofk2MVATJPCTkrqaqNFoQk/gHGPANe3B6Wh0x1Ju88Je+ayR+LnlWmIFGeaJ3LcThkrMYUp/SPTF2feAJIf9gQXwp+JpV1eKPXkeRk8w9fb538DcOrrQjM0fW2Ze6OXAAQ/YdE963XU=
