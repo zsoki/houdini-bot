@@ -13,7 +13,9 @@ import hu.zsoki.houdinibot.app.db.Db.driverClass
 import hu.zsoki.houdinibot.app.db.Db.jdbcUrl
 import hu.zsoki.houdinibot.app.domain.truncate
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.sql.Connection
 import java.time.Duration
 
@@ -22,6 +24,10 @@ private val token = System.getProperty("discord.token") ?: error("You need to de
 suspend fun main() {
     Database.connect(jdbcUrl, driverClass)
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+
+    newSuspendedTransaction {
+        SchemaUtils.create(QuoteTable)
+    }
 
     bot(token) {
         generateInviteUrl()
