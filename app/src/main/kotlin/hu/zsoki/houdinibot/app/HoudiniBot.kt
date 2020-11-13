@@ -6,7 +6,6 @@ import com.serebit.strife.data.OnlineStatus
 import com.serebit.strife.entities.field
 import com.serebit.strife.entities.reply
 import com.serebit.strife.entities.title
-import com.soywiz.klock.minutes
 import hu.zsoki.houdinibot.app.Invite.generateInviteUrl
 import hu.zsoki.houdinibot.app.command.commandStore
 import hu.zsoki.houdinibot.app.db.*
@@ -16,6 +15,7 @@ import hu.zsoki.houdinibot.app.domain.truncate
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
+import java.time.Duration
 
 private val token = System.getProperty("discord.token") ?: error("You need to define discord.token property.")
 
@@ -26,7 +26,7 @@ suspend fun main() {
     bot(token) {
         generateInviteUrl()
 
-        scheduledTask("updateUptime", 5.minutes) {
+        scheduledTask("updateUptime", Duration.ofMinutes(5)) {
             context.updatePresence(OnlineStatus.ONLINE, Activity.Type.Playing to ";help | ${Uptime.formattedString}")
         }
 

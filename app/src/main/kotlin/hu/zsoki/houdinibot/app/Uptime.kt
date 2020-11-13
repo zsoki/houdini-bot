@@ -1,21 +1,22 @@
 package hu.zsoki.houdinibot.app
 
-import com.soywiz.klock.DateTime
-import com.soywiz.klock.TimeSpan
+import java.time.Duration
+import java.time.LocalDateTime
+
 
 object Uptime {
 
-    private val botLaunchedAt = DateTime.now()
+    private val botLaunchedAt = LocalDateTime.now()
 
     val formattedString: String
         get() {
             val uptime = calculateUptime()
             return "Up: " + when {
-                uptime.hours <= 1.0 -> uptime.minutes.toInt().toString() + "m"
-                uptime.days <= 1.0 -> uptime.hours.toInt().toString() + "h"
-                else -> uptime.days.toInt().toString() + "d"
+                uptime.toHours() <= 1.0 -> uptime.toMinutes().toInt().toString() + "m"
+                uptime.toDays() <= 1.0 -> uptime.toHours().toInt().toString() + "h"
+                else -> uptime.toDays().toInt().toString() + "d"
             }
         }
 
-    private fun calculateUptime(): TimeSpan = DateTime.now() - botLaunchedAt
+    private fun calculateUptime(): Duration = Duration.between(botLaunchedAt, LocalDateTime.now())
 }
