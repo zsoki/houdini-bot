@@ -3,21 +3,20 @@ package hu.zsoki.houdinibot.app
 import com.serebit.strife.bot
 import com.serebit.strife.data.Activity
 import com.serebit.strife.data.OnlineStatus
-import com.serebit.strife.entities.field
-import com.serebit.strife.entities.reply
-import com.serebit.strife.entities.title
+import com.serebit.strife.entities.*
 import hu.zsoki.houdinibot.app.Invite.generateInviteUrl
 import hu.zsoki.houdinibot.app.command.commandStore
 import hu.zsoki.houdinibot.app.db.*
 import hu.zsoki.houdinibot.app.db.Db.driverClass
 import hu.zsoki.houdinibot.app.db.Db.jdbcUrl
 import hu.zsoki.houdinibot.app.domain.truncate
+import hu.zsoki.houdinibot.app.covid.CovidScraper
+import hu.zsoki.houdinibot.app.covid.CovidTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.sql.Connection
-import java.time.Duration
 
 private val token = System.getProperty("discord.token") ?: error("You need to define discord.token property.")
 
@@ -32,8 +31,30 @@ suspend fun main() {
     bot(token) {
         generateInviteUrl()
 
-        scheduledTask("updateUptime", Duration.ofMinutes(5)) {
-            context.updatePresence(OnlineStatus.ONLINE, Activity.Type.Playing to ";help | ${Uptime.formattedString}")
+//        scheduledTask("updateUptime", 5000L) {
+//            context.updatePresence(OnlineStatus.ONLINE, Activity.Type.Playing to ";help | ${Uptime.formattedString}")
+//        }
+
+        scheduledTask("korona", Duration.ofMinutes(5)) {
+            val scrapeData = CovidScraper.scrapeData()
+            if (!CovidTable.isNewData(scrapeData)) return@scheduledTask
+
+            CovidTable.saveNewData(scrapeData)
+
+            when (val result = SubscriptionTable.getChannelIdFor(Digest.COVID)) {
+                is ChannelIdQueryResult.Success -> {
+                    result.channelIds.forEach { channelId ->
+                        when (val guildChannel = context.getGuildChannel(channelId)) {
+                            null, !is GuildTextChannel -> SubscriptionTable.toggleSubscription(channelId, Digest.COVID)
+                            else -> {
+                                guildChannel.send(CovidEmbed(scrapeData))
+                            }
+                        }
+                    }
+                }
+                ChannelIdQueryResult.Empty -> TODO()
+                is ChannelIdQueryResult.Error -> TODO()
+            }
         }
 
         commandStore {
@@ -46,6 +67,7 @@ suspend fun main() {
                         field("`... <keyword>`") { "Recall quote for <keyword>" }
                         field("`-- <quote-id>`") { "Remove quote identified by the <quote-id>. You can get the ID when recalling a quote. E.g.: `#123`" }
                         field("`;quotes <keyword (optional)>`") { "List quotes - if no <keyword> is provided, then list all quotes stored." }
+                        field(";covid") { "Subscribe or unsubscribe to https://koronavirus.gov.hu/ updates." }
                     }
                 }
 
@@ -61,6 +83,13 @@ suspend fun main() {
                     }
 
                     message.reply(quotesReply)
+                }
+
+                command("covid") {
+                    val guildId = message.getGuild()?.id
+                    if (guildId != null) {
+                        SubscriptionTable.toggleSubscription(guildId, Digest.COVID)
+                    }
                 }
             }
 
