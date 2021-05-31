@@ -27,7 +27,8 @@ suspend fun main() {
     val client = Kord(token)
 
     client.on<MessageCreateEvent> {
-        when (message.content) {
+        val commandMessage = CommandMessage(message.content)
+        when (commandMessage.words[0]) {
             ";invite" -> message.reply { content = Invite.getUrl(client.selfId.asString) }
             ";quotes" -> {
                 val quotes = QuoteTable.getAllQuotes()
@@ -37,6 +38,31 @@ suspend fun main() {
                 }
 
                 message.reply { content = quotesReply.ifBlank { "No quotes yet." } }
+            }
+            ";addquote" -> {
+                val quote = commandMessage.dropWords(2)
+                if (quote.isBlank()) return@on
+
+                val authorName = message.author?.username ?: "UnknownUser"
+                val keyword = commandMessage.words[1]
+
+                val id = QuoteTable.addQuote(authorName, keyword, quote)
+                message.reply {
+                    content = """
+                        Quote added successfully.
+                        Type `... ${keyword}` to recall, `;delquote $id` to remove.
+                        """.trimIndent()
+                }
+            }
+            "..." -> {
+                val quote = QuoteTable.getRandomQuote(commandMessage.words[1])
+                message.channel.createMessage("`#${quote.id}` 📢  ${quote.text}")
+            }
+            ";delquote" -> {
+                val quote = QuoteTable.removeQuote(commandMessage.words[1].toInt())
+                message.reply {
+                    content = "Removed quote `#${quote.id}` from `${quote.keyword}` pool."
+                }
             }
             ";help" -> message.reply { content = "No help ready. Currently migrating to Kord." }
         }
@@ -62,31 +88,6 @@ suspend fun main() {
 //                        field("`-- <quote-id>`") { "Remove quote identified by the <quote-id>. You can get the ID when recalling a quote. E.g.: `#123`" }
 //                        field("`;quotes <keyword (optional)>`") { "List quotes - if no <keyword> is provided, then list all quotes stored." }
 //                    }
-//                }
-//            }
-//
-//            command("..") {
-//                if (extra == null) return@command
-//
-//                val authorName = message.getAuthor()?.getUsername() ?: "UnknownUser"
-//                val id = QuoteTable.addQuote(authorName, words[0], extra.removePrefix(words[0].trim()))
-//                message.reply {
-//                    description = """
-//                        Quote added successfully.
-//                        Type `... ${words[0]}` to recall, `-- $id` to remove.
-//                        """.trimIndent()
-//                }
-//            }
-//
-//            command("...") {
-//                val quote = QuoteTable.getRandomQuote(words[0])
-//                message.reply("`#${quote.id}` 📢  ${quote.text}")
-//            }
-//
-//            command("--") {
-//                val quote = QuoteTable.removeQuote(words[0].toInt())
-//                message.reply {
-//                    description = "Removed quote `#${quote.id}` from `${quote.keyword}` pool."
 //                }
 //            }
 //        }
