@@ -1,17 +1,24 @@
 group = "hu.zsoki.houdinibot.app"
 version = "0.1.0"
 
+plugins {
+    kotlin("jvm") version "1.5.10"
+    id("application")
+}
+
 application {
-    mainClassName = "hu.zsoki.houdinibot.app.HoudiniBotKt"
+    mainClass.set("hu.zsoki.houdinibot.app.HoudiniBotKt")
 }
 
 repositories {
+    mavenCentral()
     maven(url = "https://jitpack.io")
     maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
 }
 
 dependencies {
     // Kotlin
+    implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
     // Logging
@@ -39,10 +46,6 @@ dependencies {
 }
 
 tasks {
-    register("stage") {
-        dependsOn(shadowJar)
-    }
-
     test {
         useJUnitPlatform()
     }
@@ -50,12 +53,9 @@ tasks {
         kotlinOptions {
             freeCompilerArgs = listOf("-XXLanguage:+InlineClasses")
         }
+        kotlinOptions.jvmTarget = "11"
     }
-    shadowJar {
-        manifest {
-            attributes["Main-Class"] = application.mainClassName
-        }
-        archiveBaseName.set("houdini-bot")
-        archiveVersion.set("0.1.0")
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "11"
     }
 }
