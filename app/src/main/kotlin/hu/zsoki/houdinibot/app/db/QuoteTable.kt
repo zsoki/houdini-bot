@@ -1,6 +1,6 @@
 package hu.zsoki.houdinibot.app.db
 
-import hu.zsoki.houdinibot.app.domain.Quote
+import hu.zsoki.houdinibot.domain.Quote
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.`java-time`.datetime

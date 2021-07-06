@@ -1,4 +1,4 @@
-package hu.zsoki.houdinibot.app
+package hu.zsoki.houdinibot.domain
 
 class CommandMessage(private val raw: String) {
     val words = raw.split(Regex("""[\s]+"""))

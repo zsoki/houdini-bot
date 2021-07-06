@@ -1,5 +1,6 @@
 package hu.zsoki.houdinibot.app
 
+import hu.zsoki.houdinibot.domain.CommandMessage
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.params.ParameterizedTest

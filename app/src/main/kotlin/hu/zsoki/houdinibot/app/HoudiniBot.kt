@@ -7,7 +7,7 @@ import dev.kord.core.on
 import hu.zsoki.houdinibot.app.db.Db.driverClass
 import hu.zsoki.houdinibot.app.db.Db.jdbcUrl
 import hu.zsoki.houdinibot.app.db.QuoteTable
-import hu.zsoki.houdinibot.app.domain.truncate
+import hu.zsoki.houdinibot.domain.CommandMessage
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -34,7 +34,7 @@ suspend fun main() {
                 val quotes = QuoteTable.getAllQuotes()
 
                 val quotesReply = quotes.joinToString("\n") { quote ->
-                    "`#${quote.id} ${quote.keyword}` 📢  ${quote.text.truncate()}"
+                    "`#${quote.id} ${quote.keyword}` 📢  ${quote.truncated()}"
                 }
 
                 message.reply { content = quotesReply.ifBlank { "No quotes yet." } }
