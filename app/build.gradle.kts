@@ -28,11 +28,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
 
     // Discord
-    implementation("dev.kord:kord-core:kotlin-1.5") {
-        version {
-            strictly("kotlin-1.5-SNAPSHOT")
-        }
-    }
+    implementation("dev.kord:kord-core:0.7.2")
 
     // Persistence
     implementation("org.xerial:sqlite-jdbc:3.34.0")

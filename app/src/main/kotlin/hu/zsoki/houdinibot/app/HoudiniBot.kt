@@ -29,7 +29,7 @@ suspend fun main() {
     client.on<MessageCreateEvent> {
         val commandMessage = CommandMessage(message.content)
         when (commandMessage.words[0]) {
-            ";invite" -> message.reply { content = Invite.getUrl(client.selfId.asString) }
+            ";invite" -> message.channel.createMessage(Invite.getUrl(client.selfId.asString))
             ";quotes" -> {
                 val quotes = QuoteTable.getAllQuotes()
 
@@ -37,7 +37,7 @@ suspend fun main() {
                     "`#${quote.id} ${quote.keyword}` 📢  ${quote.truncated()}"
                 }
 
-                message.reply { content = quotesReply.ifBlank { "No quotes yet." } }
+                message.channel.createMessage(quotesReply.ifBlank { "No quotes yet." })
             }
             ";addquote" -> {
                 val quote = commandMessage.dropWords(2)
@@ -47,12 +47,12 @@ suspend fun main() {
                 val keyword = commandMessage.words[1]
 
                 val id = QuoteTable.addQuote(authorName, keyword, quote)
-                message.reply {
-                    content = """
+                message.channel.createMessage(
+                    """
                         Quote added successfully.
                         Type `... ${keyword}` to recall, `;delquote $id` to remove.
                         """.trimIndent()
-                }
+                )
             }
             "..." -> {
                 val quote = QuoteTable.getRandomQuote(commandMessage.words[1])
@@ -60,11 +60,11 @@ suspend fun main() {
             }
             ";delquote" -> {
                 val quote = QuoteTable.removeQuote(commandMessage.words[1].toInt())
-                message.reply {
-                    content = "Removed quote `#${quote.id}` from `${quote.keyword}` pool."
-                }
+                message.channel.createMessage(
+                    "Removed quote `#${quote.id}` from `${quote.keyword}` pool."
+                )
             }
-            ";help" -> message.reply { content = "No help ready. Currently migrating to Kord." }
+            ";help" -> message.channel.createMessage("No help ready. Currently migrating to Kord.")
         }
     }
 
